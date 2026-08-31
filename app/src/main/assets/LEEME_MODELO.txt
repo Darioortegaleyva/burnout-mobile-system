@@ -1,0 +1,19 @@
+MODELO DE IA INTEGRADO DE SERIE
+================================
+Para que la app incluya la IA local SIN que el usuario haga nada:
+
+1. Descarga un modelo .task de la colección LiteRT de Hugging Face
+   (requiere aceptar la licencia del modelo):
+   - Recomendado por tamaño/velocidad: Gemma 3 270M int4 (~300 MB)
+   - Más capaz (más lento en gama media): Gemma 3 1B int4 (~529 MB)
+2. Renómbralo exactamente a:  modelo_local.task
+3. Colócalo en esta carpeta (app/src/main/assets/) y recompila.
+
+En el primer arranque, la app lo copia a su almacenamiento privado y
+activa la IA por defecto. El usuario no tiene que hacer nada; conserva
+el interruptor en Dispositivos para desactivarla si quiere.
+
+Si esta carpeta no contiene el modelo, la app funciona igual (motor de
+plantillas) y ofrece la importación manual como alternativa.
+
+Nota: el binario no se incluye en el repositorio por licencia y tamaño.

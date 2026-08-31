@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  DEFENSA EN PROFUNDIDAD (§7.3): la app no realiza ninguna llamada de red
+  (offline-first), pero esta configuración lo hace explícito y verificable:
+  cualquier intento de tráfico en claro (HTTP) queda bloqueado por el sistema.
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>

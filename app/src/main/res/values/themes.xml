@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Tema base de la aplicación. El color real lo gestiona Compose (Theme.kt);
+      este tema XML solo sirve como punto de entrada del sistema y la splash.
+    -->
+    <style name="Theme.BurnoutApp" parent="android:Theme.Material.Light.NoActionBar" />
+</resources>

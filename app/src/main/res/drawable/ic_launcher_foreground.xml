@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Primer plano del icono adaptativo. Un símbolo de "brote/hoja" dentro de la
+  zona segura (el lienzo es 108x108 dp; la zona segura es el círculo central
+  de ~66 dp). Evoca crecimiento y bienestar, en blanco sobre el verde de fondo.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Tallo -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M53,72 C53,62 53,54 54,46 C54.6,46 55.4,46 56,46 C55,54 55,62 55,72 Z" />
+
+    <!-- Hoja izquierda -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M54,52 C46,52 40,46 38,38 C46,38 52,42 54,50 Z" />
+
+    <!-- Hoja derecha -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M55,48 C57,40 63,36 71,36 C69,44 63,50 55,50 Z" />
+</vector>

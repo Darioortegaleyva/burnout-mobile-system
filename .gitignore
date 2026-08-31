@@ -1,0 +1,28 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/captures/
+.externalNativeBuild/
+.cxx/
+/app/build/
+
+# ─── Modelo de lenguaje local ───
+# El fichero .task (cientos de MB) NO se versiona: su licencia exige
+# aceptación individual por parte de quien lo descarga, y su tamaño
+# desaconseja incluirlo en el repositorio. Ver assets/LEEME_MODELO.txt.
+*.task
+
+# ─── Firma de la aplicación ───
+# Nunca subir el almacén de claves ni sus contraseñas.
+*.jks
+*.keystore
+keystore.properties
+signing.properties
+
+# ─── Otros ───
+*.apk
+*.aab
+.kotlin/

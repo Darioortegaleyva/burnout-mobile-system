@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Manifest SOLO de la variante debug: añade permisos de ESCRITURA en Health
+  Connect para poder generar una "noche de prueba" sin wearable físico.
+  La variante release no los incluye (principio P6 — mínimos permisos).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.health.WRITE_SLEEP" />
+    <uses-permission android:name="android.permission.health.WRITE_RESTING_HEART_RATE" />
+    <uses-permission android:name="android.permission.health.WRITE_HEART_RATE_VARIABILITY" />
+</manifest>

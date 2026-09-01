@@ -34,6 +34,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.tfg.burnout.ui.theme.Ambar
+import androidx.compose.ui.res.stringResource
+import com.tfg.burnout.R
 import com.tfg.burnout.ui.theme.TextoApagado
 import com.tfg.burnout.ui.theme.VerdeCalmado
 
@@ -427,12 +429,15 @@ fun DevicesScreen() {
 
             // Derecho de portabilidad (RGPD art. 20): exporta los datos del
             // usuario en JSON y abre el selector de compartir del sistema.
+            // El nombre se lee del recurso aquí, en ámbito componible, porque
+            // stringResource no puede invocarse dentro del onClick.
+            val nombreApp = stringResource(R.string.app_name)
             TextButton(
                 onClick = {
                     vm.exportarDatos { json ->
                         val intent = android.content.Intent(android.content.Intent.ACTION_SEND).apply {
                             type = "application/json"
-                            putExtra(android.content.Intent.EXTRA_SUBJECT, "Mis datos — Mi Energía")
+                            putExtra(android.content.Intent.EXTRA_SUBJECT, "Mis datos — $nombreApp")
                             putExtra(android.content.Intent.EXTRA_TEXT, json)
                         }
                         context.startActivity(

@@ -22,6 +22,8 @@ import com.tfg.burnout.ui.theme.Ambar
 import com.tfg.burnout.ui.theme.AmbarClaro
 import com.tfg.burnout.ui.theme.LavandaClara
 import com.tfg.burnout.ui.theme.TextoApagado
+import androidx.compose.ui.res.stringResource
+import com.tfg.burnout.R
 import com.tfg.burnout.ui.theme.VerdeCalmado
 import com.tfg.burnout.ui.theme.VerdeCalmadoClaro
 
@@ -43,7 +45,7 @@ fun DashboardScreen(onIrAActividades: () -> Unit = {}) {
     val estado by vm.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Mi Energía") }) }
+        topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) }
     ) { padding ->
         Column(
             modifier = Modifier

@@ -120,10 +120,10 @@ object CatalogoCesqt {
                 idx++
             }
         }
-        add(DimensionCesqt.ILUSION_POR_TRABAJO, 5)
-        add(DimensionCesqt.DESGASTE_PSIQUICO, 4)
-        add(DimensionCesqt.INDOLENCIA, 6)
-        add(DimensionCesqt.CULPA, 5)
+        // El reparto lo declara cada dimensión (numItems), no se repite aquí:
+        // antes los números 5/4/6/5 vivían en dos sitios y numItems no se
+        // usaba en ninguna parte, así que cambiar uno no habría movido el otro.
+        DimensionCesqt.entries.forEach { add(it, it.numItems) }
     }
 
     init {

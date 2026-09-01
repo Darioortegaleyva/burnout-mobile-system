@@ -14,8 +14,12 @@ import com.tfg.burnout.domain.model.PautaCoping
  * a través del ModuloEticoRuteo.
  */
 class GestorCoping(
-    private val umbralCesqt: Double = 0.50,    // por encima => "MAL" (subjetivo)
-    private val umbralBiometria: Double = 0.40 // por encima => "MAL" (objetivo)
+    // Los cortes viven en UmbralesRiesgo, que es donde están documentados y
+    // razonados; aquí solo se consumen. Antes se repetían sus valores como
+    // literales, de modo que las constantes quedaban sin usar y podían
+    // divergir de la memoria sin que nada lo advirtiera.
+    private val umbralCesqt: Double = UmbralesRiesgo.CESQT_DESFAVORABLE,
+    private val umbralBiometria: Double = UmbralesRiesgo.BIOMETRIA_DESFAVORABLE
 ) {
 
     /**

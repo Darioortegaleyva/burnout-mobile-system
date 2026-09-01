@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.tfg.burnout.data.local.entity.MetaEntity
 import com.tfg.burnout.data.repository.BurnoutRepository
+import com.tfg.burnout.domain.engine.UmbralesRiesgo
 import com.tfg.burnout.domain.model.IndiceRiesgo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -97,10 +98,17 @@ class DashboardViewModel(
                     retoDelDia = "Completa tu evaluación inicial en el chat",
                 )
             } else {
-                val banda = when {
-                    indice.energia >= 65 -> BandaEstado.BUEN_MOMENTO
-                    indice.energia >= 40 -> BandaEstado.EN_CAMINO
-                    else -> BandaEstado.DIA_DE_CUIDARSE
+                // La banda la decide UmbralesRiesgo, que es donde están los
+                // cortes documentados (R < 0,35 · 0,35–0,60 · ≥ 0,60). Antes se
+                // reimplantaban aquí sobre la energía (65/40), lo que divergía
+                // justo en los dos cortes: con R = 0,35 exacto esta pantalla
+                // decía «Buen momento» y la exportación RGPD «Vas haciendo
+                // camino», y con R = 0,60 la pantalla se quedaba en «Vas
+                // haciendo camino» cuando ya tocaba «Hoy toca cuidarse».
+                val banda = when (UmbralesRiesgo.bandaDe(indice.r)) {
+                    UmbralesRiesgo.Banda.BUENO -> BandaEstado.BUEN_MOMENTO
+                    UmbralesRiesgo.Banda.INTERMEDIO -> BandaEstado.EN_CAMINO
+                    UmbralesRiesgo.Banda.CUIDARSE -> BandaEstado.DIA_DE_CUIDARSE
                 }
                 DashboardUiState(
                     cargando = false,

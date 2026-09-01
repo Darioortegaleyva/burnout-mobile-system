@@ -57,11 +57,13 @@ Trabajo de Fin de Grado del Grado en Ingeniería Informática de la Universidad 
 
 ### Instalación
 
-Este repositorio contiene el código fuente, no un instalable listo para descargar. Tienes dos caminos:
+Instalas un único archivo `.apk` y ya está. **Todo viene dentro**, incluido el modelo de inteligencia artificial: no hay descargas posteriores, ni configuración inicial, ni cuentas que crear. En el primer arranque la aplicación coloca el modelo en su almacenamiento privado y lo deja activo por defecto.
 
-**Si sabes compilar**, sigue las instrucciones de [Compilar desde el código](#compilar-desde-el-código) y genera el APK tú mismo.
+Este repositorio contiene el código fuente, no el instalable. Para obtener el `.apk` tienes dos vías: que alguien te lo pase ya compilado, o compilarlo tú siguiendo las instrucciones de [Compilar desde el código](#compilar-desde-el-código).
 
-**Si no**, necesitas que alguien te pase el archivo `.apk` ya compilado. Para instalarlo, cópialo al móvil, ábrelo desde el explorador de archivos y acepta el aviso de «instalar aplicaciones de origen desconocido» que Android mostrará. Es normal: el aviso aparece con cualquier aplicación que no venga de Play Store.
+Con el archivo en la mano, cópialo al móvil, ábrelo desde el explorador de archivos y acepta el aviso de «instalar aplicaciones de origen desconocido». Es normal: Android lo muestra con cualquier aplicación que no venga de Play Store.
+
+El instalable ronda los 300 MB, casi todo modelo. Es el precio de que la aplicación funcione sin conexión y sin enviar nada a ningún servidor.
 
 ### Primeros pasos
 
@@ -147,14 +149,18 @@ Abre la carpeta desde Android Studio y espera a que Gradle sincronice.
 
 ### Añadir el modelo de lenguaje
 
-**El modelo no está en el repositorio.** Ocupa unos 237 MB y su licencia exige aceptación individual, así que tienes que descargarlo tú:
+> Este paso es **solo para quien compila**. Quien instala el `.apk` no tiene que hacer nada: el modelo ya viaja dentro.
+
+El binario del modelo no está versionado en este repositorio, por dos motivos: ocupa unos 237 MB, tamaño que desaconseja su versionado, y su licencia exige aceptación individual por parte de quien lo descarga. Para que la compilación lo incorpore:
 
 1. Entra en [Hugging Face — LiteRT Community](https://huggingface.co/litert-community) y busca `Gemma3-270M-IT` en formato `.task` con cuantización a 4 bits
 2. Acepta los términos de licencia de Gemma
-3. Descarga el archivo y renómbralo a `modelo_local.task`
+3. Renombra el archivo a `modelo_local.task`
 4. Colócalo en `app/src/main/assets/`
 
-Sin este paso la aplicación **compila y funciona igual**: el asistente muestra el texto documental sin reformular, que es su comportamiento de respaldo. La reformulación es una mejora de presentación, no un requisito.
+A partir de ahí, cualquier `.apk` que generes lo llevará incluido y el usuario final lo recibirá integrado.
+
+Si compilas **sin** colocarlo, la aplicación funciona igual: el asistente muestra el texto documental sin reformular, que es su comportamiento de respaldo, y ofrece importar un modelo manualmente desde la pantalla de Dispositivos. La reformulación es una mejora de presentación, no un requisito.
 
 ### Generar el APK
 

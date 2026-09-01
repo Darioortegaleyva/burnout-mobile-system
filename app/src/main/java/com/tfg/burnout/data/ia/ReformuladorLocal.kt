@@ -1,6 +1,7 @@
 package com.tfg.burnout.data.ia
 
 import android.content.Context
+import android.util.Log
 import com.google.mediapipe.tasks.genai.llminference.LlmInference
 import com.tfg.burnout.domain.engine.ValidadorSalida
 
@@ -17,6 +18,8 @@ import com.tfg.burnout.domain.engine.ValidadorSalida
  */
 class ReformuladorLocal(private val context: Context) {
 
+    private companion object { const val TAG = "ReformuladorLocal" }
+
     @Volatile private var motor: LlmInference? = null
 
     fun disponible(): Boolean = AlmacenModelo.disponible(context)
@@ -32,6 +35,12 @@ class ReformuladorLocal(private val context: Context) {
                     .setMaxTokens(96)
                     .build()
                 LlmInference.createFromOptions(context, opciones)
+            }.onFailure {
+                // El fallo sigue siendo silencioso para el usuario —se usa el
+                // texto documental íntegro, que siempre es seguro—, pero deja
+                // rastro: sin él, un modelo que no carga es indistinguible en
+                // pantalla de uno que carga y redacta.
+                Log.w(TAG, "No se pudo crear el motor de inferencia local", it)
             }.getOrNull()?.also { motor = it }
         }
     }

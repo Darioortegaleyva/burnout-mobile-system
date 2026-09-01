@@ -22,6 +22,12 @@
 keystore.properties
 signing.properties
 
+# ─── Herramientas de asistencia y notas de trabajo ───
+# El historial se mantiene limpio de atribuciones a herramientas: estos
+# archivos son de uso local y no forman parte de la entrega.
+CLAUDE.md
+INFORME_COHERENCIA.md
+
 # ─── Otros ───
 *.apk
 *.aab

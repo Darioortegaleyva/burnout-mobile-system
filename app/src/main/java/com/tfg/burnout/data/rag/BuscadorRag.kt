@@ -69,6 +69,26 @@ object BuscadorRag {
         "espanola", "espanol", "agencia", "sociedad", "asociacion", "comision"
     )
 
+    /**
+     * Etiquetas que nombran un ACTO DE HABLA y no un tema.
+     *
+     * «Recomendación» describe lo que el usuario pide que se haga, no aquello
+     * de lo que pregunta, y por eso casa con «recomiéndame» sea cual sea el
+     * asunto: sin esta distinción, «recomiéndame una película» resultaba
+     * pertinente frente a las 24 pautas del catálogo. Se le aplica el mismo
+     * criterio que a institucionales: sigue puntuando —forma parte del texto
+     * indexado— pero no acredita pertinencia por sí sola.
+     *
+     * Nótese que las otras etiquetas de la plantilla de actividades
+     * («actividad», «ejercicio», «pauta») NO figuran aquí: cuando alguien
+     * pregunta por el catálogo, esas palabras sí son el tema de su consulta,
+     * y excluirlas dejaba «qué actividades hay» sin respuesta pese a que el
+     * mensaje de respaldo del asistente invita expresamente a preguntarlo.
+     *
+     * Se excluye por raíz, no por igualdad, para no romper los plurales.
+     */
+    private val andamiaje = setOf("recomendacion")
+
     private fun raiz(palabra: String): String =
         if (palabra.length >= LONGITUD_RAIZ) palabra.take(LONGITUD_RAIZ) else palabra
 
@@ -76,7 +96,14 @@ object BuscadorRag {
     private fun coincidencias(lista: List<String>, termino: String): Int =
         lista.count { it == termino || raiz(it) == raiz(termino) }
 
-    private fun tokenizar(texto: String): List<String> =
+    /** Raíces de las etiquetas de andamiaje, para excluirlas por familia léxica. */
+    private val raicesAndamiaje: Set<String> = andamiaje.map(::raiz).toSet()
+
+    /**
+     * Visible para BaseConocimiento, que lo usa al decidir si el título de una
+     * pauta aporta un único término con contenido.
+     */
+    internal fun tokenizar(texto: String): List<String> =
         normalizar(texto)
             .split(Regex("[^a-z0-9ñ]+"))
             .filter { it.length > 2 && it !in vacias }
@@ -130,9 +157,12 @@ object BuscadorRag {
             // que la coincidencia sea temática: o el término figura entre las
             // etiquetas del fragmento, que recogen cómo se pregunta por ese
             // tema, o coinciden al menos dos términos distintos del cuerpo.
-            // Solo los términos con contenido propio acreditan pertinencia.
+            // Solo los términos con contenido propio acreditan pertinencia, y
+            // solo frente a las etiquetas TEMÁTICAS: las que nombran un acto
+            // de habla casan con la petición, no con el asunto preguntado.
             val conContenido = terminos.distinct().filter { it !in institucionales }
-            val enEtiquetas = conContenido.count { coincidencias(etiquetas, it) > 0 }
+            val tematicas = etiquetas.filter { raiz(it) !in raicesAndamiaje }
+            val enEtiquetas = conContenido.count { coincidencias(tematicas, it) > 0 }
             val enCuerpo = conContenido.count { coincidencias(cuerpo, it) > 0 }
             val pertinente = enEtiquetas >= 1 || enCuerpo >= 2
 

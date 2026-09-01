@@ -69,10 +69,29 @@ object BaseConocimiento {
                     etiquetas = listOf(
                         categoria.etiqueta, "actividad", "ejercicio", "pauta",
                         "que puedo hacer", "recomendacion"
-                    ) + pauta.titulo.lowercase().split(" ")
+                    ) + etiquetaDeTituloEscueto(pauta.titulo)
                 )
             }
         }
+
+    /**
+     * Las palabras del título NO se indexan como etiquetas: ya viajan en el
+     * cuerpo, porque `texto` es el título más la descripción. Duplicarlas les
+     * daba peso doble y, sobre todo, permitía que una palabra incidental
+     * acreditara pertinencia ella sola: «mañana», del título «Luz por la
+     * mañana», hacía que el asistente respondiera a «¿qué tiempo hace mañana?».
+     *
+     * Única excepción, la que aquí se resuelve: los títulos que aportan UN
+     * SOLO término con contenido. En ellos la vía del cuerpo no basta, porque
+     * el filtro de pertinencia exige dos coincidencias distintas, y la pauta
+     * dejaría de encontrarse por su nombre («Nombrar lo que pasa»,
+     * «Recuperar el porqué», «Algo que no rinda»). Al tratarse de un único
+     * término sustantivo, no reintroduce el problema anterior.
+     */
+    private fun etiquetaDeTituloEscueto(titulo: String): List<String> {
+        val conContenido = BuscadorRag.tokenizar(titulo)
+        return if (conContenido.size == 1) conContenido else emptyList()
+    }
 
     private val fragmentosTeoricos: List<Fragmento> = listOf(
 

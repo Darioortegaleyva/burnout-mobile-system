@@ -6,11 +6,25 @@
       Nótese que NO se declara ACCESS_FINE_LOCATION ni COARSE: el sistema es
       offline-first y la derivación al COP se resuelve preguntando la provincia
       por chat (principio P6 — mínimos permisos; minimización RGPD art. 5.1.c).
+      Se declaran EXACTAMENTE los tres tipos que la app lee; READ_HEART_RATE
+      figuraba aquí sin que ningún punto del código leyera HeartRateRecord.
     -->
     <uses-permission android:name="android.permission.health.READ_SLEEP" />
-    <uses-permission android:name="android.permission.health.READ_HEART_RATE" />
     <uses-permission android:name="android.permission.health.READ_HEART_RATE_VARIABILITY" />
     <uses-permission android:name="android.permission.health.READ_RESTING_HEART_RATE" />
+
+    <!--
+      VISIBILIDAD DEL PAQUETE DE HEALTH CONNECT.
+      Obligatoria desde Android 11 por las reglas de visibilidad de paquetes.
+      En Android 14+ Health Connect va integrado en el sistema y se ve sin
+      esto, pero por debajo (minSdk es 28) es una aplicación aparte: sin la
+      declaración, getSdkStatus() no puede verla y la informa como NO
+      DISPONIBLE, con lo que la pantalla de dispositivos deshabilita la
+      conexión en los dispositivos donde precisamente hace falta.
+    -->
+    <queries>
+        <package android:name="com.google.android.apps.healthdata" />
+    </queries>
 
     <!-- Notificaciones para las micro-interacciones EMA y avisos suaves -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

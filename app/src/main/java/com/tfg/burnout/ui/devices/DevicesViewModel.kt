@@ -88,7 +88,6 @@ class DevicesViewModel(
 
     fun comprobarEstado() {
         viewModelScope.launch {
-            val disponible = healthConnect.disponibilidad()
             val tienePermisos = runCatching { healthConnect.tienePermisos() }.getOrDefault(false)
 
             // Se recoge TODO antes de publicar el estado. Si se fijase primero

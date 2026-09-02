@@ -26,8 +26,19 @@ class LecturaNocturnaWorker(
         return try {
             val repo = (applicationContext as BurnoutApp).repository
 
-            // 1 + 2: lectura biométrica diaria y actualización de línea base.
-            repo.sincronizarBiometriaHoy()
+            // 1 + 2: lectura biométrica y actualización de línea base.
+            //
+            // Se releen los ÚLTIMOS DÍAS, no solo hoy. El worker corre a las
+            // 03:00, cuando la persona todavía está durmiendo: la sesión de
+            // sueño de esa noche no está cerrada y la aplicación del reloj no
+            // la habrá volcado a Health Connect hasta el despertar. Leyendo
+            // únicamente `hoy` se consolidaba una jornada vacía que ya nunca
+            // se revisaba, porque ninguna otra ruta automática vuelve sobre un
+            // día pasado —la relectura de varios días solo estaba cableada al
+            // botón de modo desarrollo—. Con la ventana corta, la noche entra
+            // en la ejecución de la madrugada siguiente y la clave primaria
+            // por día evita duplicados.
+            repo.sincronizarUltimosDias(DIAS_A_RELEER)
 
             // 3: el recálculo del índice global lo decide el repositorio según
             // la ventana temporal; aquí simplemente lo invocamos y persistimos.
@@ -42,5 +53,12 @@ class LecturaNocturnaWorker(
 
     companion object {
         const val NOMBRE_TRABAJO = "lectura_nocturna_biometrica"
+
+        /**
+         * Ventana de relectura. Tres días cubren la noche en curso, la última
+         * ya cerrada y un día de margen para un reloj que sincronice tarde,
+         * sin llegar a reescribir histórico antiguo en cada ejecución.
+         */
+        private const val DIAS_A_RELEER = 3
     }
 }

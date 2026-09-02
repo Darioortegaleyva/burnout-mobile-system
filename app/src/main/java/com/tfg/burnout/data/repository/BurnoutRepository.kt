@@ -195,24 +195,26 @@ class BurnoutRepository(
     suspend fun sincronizarUltimosDias(dias: Int) {
         if (!healthConnect.tienePermisos()) return
         for (i in (dias - 1) downTo 0) {
-            val fecha = LocalDate.now().minusDays(i.toLong())
-            val lectura = healthConnect.leerJornada(fecha)
-            biometriaDao.guardar(
-                BiometriaEntity(
-                    fechaEpochDay = lectura.fechaEpochDay,
-                    rmssdMs = lectura.rmssdMs,
-                    tstMin = lectura.tstMin,
-                    rhrBpm = lectura.rhrBpm
-                )
-            )
+            guardarJornada(LocalDate.now().minusDays(i.toLong()))
         }
         actualizarLineaBase()
         calcularIndiceActual()
     }
 
-    suspend fun sincronizarBiometriaHoy() {
-        if (!healthConnect.tienePermisos()) return
-        val lectura = healthConnect.leerJornada(LocalDate.now())
+    /**
+     * Lee una jornada y la persiste, SALVO que venga completamente vacía.
+     *
+     * Una lectura sin ninguna de las tres métricas no aporta información, y
+     * guardarla sí hace daño por partida doble: la clave primaria es el día,
+     * así que sobrescribiría con nulos una jornada ya consolidada (basta con
+     * que Health Connect deje de devolverla, o con que se revoquen permisos a
+     * medias), y además ocupa una plaza en la ventana de la línea base, que
+     * cuenta filas para exigir su mínimo de días pero promedia solo los
+     * valores no nulos.
+     */
+    private suspend fun guardarJornada(fecha: LocalDate) {
+        val lectura = healthConnect.leerJornada(fecha)
+        if (lectura.rmssdMs == null && lectura.tstMin == null && lectura.rhrBpm == null) return
         biometriaDao.guardar(
             BiometriaEntity(
                 fechaEpochDay = lectura.fechaEpochDay,
@@ -221,6 +223,11 @@ class BurnoutRepository(
                 rhrBpm = lectura.rhrBpm
             )
         )
+    }
+
+    suspend fun sincronizarBiometriaHoy() {
+        if (!healthConnect.tienePermisos()) return
+        guardarJornada(LocalDate.now())
         actualizarLineaBase()
         // El índice debe recalcularse en cuanto entra biometría nueva: de lo
         // contrario seguiría reflejando solo la rama psicométrica del último

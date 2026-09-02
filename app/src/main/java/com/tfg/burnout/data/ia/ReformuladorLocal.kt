@@ -32,7 +32,15 @@ class ReformuladorLocal(private val context: Context) {
             return runCatching {
                 val opciones = LlmInference.LlmInferenceOptions.builder()
                     .setModelPath(AlmacenModelo.ruta(context))
-                    .setMaxTokens(96)
+                    // Ventana de contexto COMPLETA (entrada + salida), no
+                    // longitud de la respuesta. La instrucción de reformular
+                    // gasta ya unos sesenta tokens, y el prompt del asistente
+                    // documental añade encima los fragmentos recuperados: con
+                    // 96 el motor abortaba en nativo —un SIGABRT que el
+                    // runCatching de más abajo no puede capturar— en lugar de
+                    // caer al respaldo. 1024 da margen al RAG sin disparar la
+                    // memoria residente.
+                    .setMaxTokens(1024)
                     .build()
                 LlmInference.createFromOptions(context, opciones)
             }.onFailure {

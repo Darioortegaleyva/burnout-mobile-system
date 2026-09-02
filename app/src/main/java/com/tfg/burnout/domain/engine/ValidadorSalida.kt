@@ -22,7 +22,11 @@ object ValidadorSalida {
         if (candidata.isNullOrBlank()) return false
         val c = candidata.trim()
         if (c.equals(original.trim(), ignoreCase = true)) return false
-        if (c.length < 20 || c.length > 240) return false
+        // El tope alto se mide contra la escala real de los fragmentos
+        // documentales (entre 350 y 550 caracteres): con 240 se
+        // rechazaban por longitud las respuestas de dos o tres frases
+        // que el propio prompt pide, y todo acababa en el respaldo.
+        if (c.length < 20 || c.length > 600) return false
         if (c.length > original.length * 2.5) return false
         if (c.contains("\n\n")) return false
         val minus = c.lowercase()

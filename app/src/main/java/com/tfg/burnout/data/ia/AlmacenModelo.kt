@@ -45,12 +45,29 @@ object AlmacenModelo {
     private const val ASSET = "modelo_local.task"
 
     fun asegurarDesdeAssets(context: Context): Boolean {
-        if (disponible(context)) return true
+        val nombres = runCatching { context.assets.list("") }.getOrNull()
+            ?: return disponible(context)
+        if (ASSET !in nombres) return disponible(context)
+
+        // La referencia es el TAMAÑO del asset, no la mera existencia del
+        // fichero guardado. Comprobar solo si había modelo dejaba clavado el
+        // de la versión anterior: al actualizar la aplicación con un .task
+        // distinto, el dispositivo que ya tuviera uno importado no recibía
+        // nunca el nuevo y seguía cargando el viejo en silencio. Como el
+        // asset se empaqueta sin comprimir (noCompress "task"), su longitud
+        // se conoce sin descomprimir nada.
+        val tamanoAsset = runCatching {
+            context.assets.openFd(ASSET).use { it.length }
+        }.getOrNull()
+
+        val destino = fichero(context)
+        val alDia = if (tamanoAsset != null) destino.length() == tamanoAsset
+                    else disponible(context)
+        if (alDia && disponible(context)) return true
+
         return runCatching {
-            val nombres = context.assets.list("") ?: emptyArray()
-            if (ASSET !in nombres) return false
             context.assets.open(ASSET).use { entrada ->
-                fichero(context).outputStream().use { salida -> entrada.copyTo(salida) }
+                destino.outputStream().use { salida -> entrada.copyTo(salida) }
             }
             disponible(context)
         }.getOrDefault(false)

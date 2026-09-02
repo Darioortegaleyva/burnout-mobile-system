@@ -2,7 +2,6 @@ package com.tfg.burnout
 
 import android.app.Application
 import com.tfg.burnout.data.healthconnect.HealthConnectManager
-import com.tfg.burnout.data.ia.AjustesIa
 import com.tfg.burnout.data.ia.AlmacenModelo
 import com.tfg.burnout.data.ia.ReformuladorLocal
 import kotlinx.coroutines.CoroutineScope
@@ -53,14 +52,20 @@ class BurnoutApp : Application() {
         // abrirse es el peor resultado posible.
 
         // Modelo integrado de serie (§2.3.6): si la compilación trae el
-        // .task en assets, se copia en segundo plano y la IA queda lista
-        // sin que el usuario haga nada.
+        // .task en assets, se copia en segundo plano y queda preparado.
+        //
+        // Pero NO se activa solo. El interruptor de Dispositivos existe y
+        // funciona —el motor carga y reformula—, y aun así la reformulación
+        // queda DESACTIVADA DE FÁBRICA: LlmInference.generateResponse() es
+        // síncrona y se llama desde el hilo principal, de modo que al
+        // generar bloquea la interfaz y el sistema levanta un ANR; la
+        // pantalla se queda congelada sin vuelta atrás, que para el usuario
+        // es peor que no reformular. Mientras esa llamada no salga del hilo
+        // principal, con tiempo máximo y retorno al respaldo, el asistente
+        // opera con el texto documental íntegro: es su comportamiento de
+        // respaldo documentado (§2.3.6) y el único que se puede garantizar.
         appScope.launch(Dispatchers.IO) {
-            runCatching {
-                if (AlmacenModelo.asegurarDesdeAssets(this@BurnoutApp)) {
-                    AjustesIa.activarPorDefectoSiPrimeraVez(this@BurnoutApp)
-                }
-            }
+            runCatching { AlmacenModelo.asegurarDesdeAssets(this@BurnoutApp) }
         }
 
         // Lectura nocturna, canal de notificación y recordatorio periódico.

@@ -284,24 +284,11 @@ fun DevicesScreen() {
             // --- IA local opcional (§2.3.6): el motor decide, el modelo redacta ---
             var modeloDisponible by remember { mutableStateOf(AlmacenModelo.disponible(context)) }
             var iaActivada by remember { mutableStateOf(AjustesIa.activada(context)) }
-            var importando by remember { mutableStateOf(false) }
             // El aprovisionamiento desde assets ocurre en segundo plano al
             // arrancar; al entrar en esta pantalla, refrescamos el estado.
             LaunchedEffect(Unit) {
                 modeloDisponible = AlmacenModelo.disponible(context)
                 iaActivada = AjustesIa.activada(context)
-            }
-            val selectorModelo = rememberLauncherForActivityResult(
-                androidx.activity.result.contract.ActivityResultContracts.OpenDocument()
-            ) { uri ->
-                if (uri != null) {
-                    importando = true
-                    scope.launch {
-                        withContext(Dispatchers.IO) { AlmacenModelo.importar(context, uri) }
-                        modeloDisponible = AlmacenModelo.disponible(context)
-                        importando = false
-                    }
-                }
             }
             Card(modifier = Modifier.fillMaxWidth()) {
                 Column(Modifier.padding(16.dp)) {
@@ -313,7 +300,8 @@ fun DevicesScreen() {
                                 if (modeloDisponible)
                                     "Modelo integrado (" + AlmacenModelo.tamanoMb(context) + " MB). Todo se ejecuta en tu móvil, sin conexión."
                                 else
-                                    "Esta compilación no incluye el modelo. Puedes importarlo manualmente (.task).",
+                                    "El modelo no está disponible en este dispositivo: el asistente " +
+                                    "responde con el texto documental íntegro.",
                                 style = MaterialTheme.typography.bodySmall, color = TextoApagado
                             )
                         }
@@ -327,12 +315,6 @@ fun DevicesScreen() {
                         )
                     }
                     Spacer(Modifier.height(8.dp))
-                    OutlinedButton(
-                        onClick = { selectorModelo.launch(arrayOf("application/octet-stream", "*/*")) },
-                        enabled = !importando,
-                        modifier = Modifier.fillMaxWidth()
-                    ) { Text(if (importando) "Importando…" else "Importar o reemplazar modelo (.task)") }
-                    Spacer(Modifier.height(4.dp))
                     Text(
                         "Solo varía la redacción de mensajes ya validados; nunca las preguntas " +
                         "del cuestionario ni el flujo de ayuda profesional.",
@@ -349,6 +331,19 @@ fun DevicesScreen() {
             if (com.tfg.burnout.BuildConfig.DEBUG) {
                 var insertando by remember { mutableStateOf(false) }
                 var resultadoPrueba by remember { mutableStateOf<String?>(null) }
+                var importando by remember { mutableStateOf(false) }
+                val selectorModelo = rememberLauncherForActivityResult(
+                    androidx.activity.result.contract.ActivityResultContracts.OpenDocument()
+                ) { uri ->
+                    if (uri != null) {
+                        importando = true
+                        scope.launch {
+                            withContext(Dispatchers.IO) { AlmacenModelo.importar(context, uri) }
+                            modeloDisponible = AlmacenModelo.disponible(context)
+                            importando = false
+                        }
+                    }
+                }
                 val launcherEscrituraSemana = rememberLauncherForActivityResult(
                     contract = PermissionController.createRequestPermissionResultContract()
                 ) { _ ->
@@ -414,6 +409,19 @@ fun DevicesScreen() {
                             onClick = { scope.launch { app.repository.borrarTodosLosDatos() } },
                             modifier = Modifier.fillMaxWidth()
                         ) { Text("Restablecer la app (borrar mis datos)") }
+                        Spacer(Modifier.height(8.dp))
+                        // Sustituye el modelo aprovisionado desde assets por otro
+                        // .task del almacenamiento, para ensayar la reformulación
+                        // con distintos modelos sin reinstalar. Vive aquí, y no en
+                        // la tarjeta de arriba, porque la reformulación va
+                        // desactivada de fábrica: al usuario final no le sirve de
+                        // nada y, de paso, la compilación de distribución no abre
+                        // un selector de archivos arbitrarios del almacenamiento.
+                        OutlinedButton(
+                            onClick = { selectorModelo.launch(arrayOf("application/octet-stream", "*/*")) },
+                            enabled = !importando,
+                            modifier = Modifier.fillMaxWidth()
+                        ) { Text(if (importando) "Importando…" else "Importar o reemplazar modelo (.task)") }
                         resultadoPrueba?.let {
                             Spacer(Modifier.height(4.dp))
                             Text(it, style = MaterialTheme.typography.bodySmall, color = TextoApagado)

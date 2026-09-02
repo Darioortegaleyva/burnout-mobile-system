@@ -39,6 +39,11 @@ fun ActividadesScreen() {
     val vm: ActividadesViewModel = viewModel(factory = ActividadesViewModel.Factory(app.repository))
     val estado by vm.ui.collectAsStateWithLifecycle()
 
+    // Igual que en Inicio: el ViewModel sobrevive al cambio de pestaña, así
+    // que sin este refresco las categorías sugeridas seguirían ordenadas
+    // según el índice que hubiera al abrir la aplicación, no el actual.
+    LaunchedEffect(Unit) { vm.cargar() }
+
     Scaffold(topBar = { TopAppBar(title = { Text("Actividades") }) }) { padding ->
         if (estado.cargando) {
             Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {

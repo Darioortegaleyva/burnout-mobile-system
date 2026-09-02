@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.filled.Whatshot
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,6 +44,14 @@ fun DashboardScreen(onIrAActividades: () -> Unit = {}) {
         factory = DashboardViewModel.Factory(app.repository)
     )
     val estado by vm.uiState.collectAsStateWithLifecycle()
+
+    // El ViewModel sobrevive al cambio de pestaña (la navegación inferior usa
+    // saveState/restoreState), de modo que cargar solo en su init dejaba el
+    // panel congelado: tras sincronizar en Dispositivos o completar una
+    // evaluación en el Asistente, Inicio seguía mostrando la banda anterior
+    // hasta reiniciar la aplicación. El composable sí se recompone al volver,
+    // así que es aquí donde toca refrescar.
+    LaunchedEffect(Unit) { vm.cargar() }
 
     Scaffold(
         topBar = { TopAppBar(title = { Text(stringResource(R.string.app_name)) }) }

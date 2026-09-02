@@ -44,11 +44,6 @@ class GestorCoping(
     }
 
     /**
-     * Devuelve las categorías de pauta priorizadas según el escenario.
-     * (La selección concreta de pautas dentro de cada categoría la hace el
-     * repositorio, que las extrae de Room evitando repetir las ya mostradas.)
-     */
-    /**
      * Categorías priorizadas teniendo en cuenta TAMBIÉN qué componente del
      * índice está peor.
      *

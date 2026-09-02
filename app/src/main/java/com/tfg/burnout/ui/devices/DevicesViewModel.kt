@@ -116,8 +116,7 @@ class DevicesViewModel(
         }
     }
 
-    /** Botón "Forzar lectura ahora" (§6.4). */
-    /** Lee varios días de golpe (tras insertar una semana simulada). */
+    /** Perfil físico opcional (Tarea 6): la edad matiza el umbral de FC. */
     fun guardarPerfilFisico(edad: Int?) {
         viewModelScope.launch {
             repository.guardarPerfilFisico(edad)
@@ -132,6 +131,7 @@ class DevicesViewModel(
         }
     }
 
+    /** Lee varios días de golpe (tras insertar una semana simulada). */
     fun forzarLecturaSemana() {
         viewModelScope.launch {
             _ui.value = _ui.value.copy(sincronizando = true)
@@ -141,6 +141,7 @@ class DevicesViewModel(
         }
     }
 
+    /** Botón «Conectar y actualizar datos» (§6.4). */
     fun forzarLectura() {
         viewModelScope.launch {
             _ui.value = _ui.value.copy(sincronizando = true)

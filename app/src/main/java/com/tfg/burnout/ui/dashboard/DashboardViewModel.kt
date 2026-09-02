@@ -53,7 +53,9 @@ class DashboardViewModel(
     private var cacheMetas: List<MetaEntity> = emptyList()
 
     init {
-        cargar()
+        // La carga inicial la dispara la pantalla, que además la repite cada
+        // vez que se vuelve a la pestaña; hacerlo también aquí solo duplicaría
+        // el cálculo del índice en el primer arranque.
         // CU-03: los retos elegidos en el chat, con su check diario.
         viewModelScope.launch {
             repository.observarMetasActivas().collect { lista ->

@@ -38,7 +38,8 @@ class ActividadesViewModel(
     private val _ui = MutableStateFlow(ActividadesUiState())
     val ui: StateFlow<ActividadesUiState> = _ui.asStateFlow()
 
-    init { cargar() }
+    // La carga la dispara la pantalla en cada entrada a la pestaña; ver el
+    // LaunchedEffect de ActividadesScreen.
 
     fun cargar() {
         viewModelScope.launch {

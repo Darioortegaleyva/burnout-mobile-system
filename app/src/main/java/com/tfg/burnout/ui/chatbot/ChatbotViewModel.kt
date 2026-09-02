@@ -29,7 +29,6 @@ data class MensajeChat(
     val esBot: Boolean
 )
 
-/** Fase en la que se encuentra la conversación. */
 /**
  * Fases del chat. El enrutamiento (Tarea 0) decide entre dos comportamientos:
  *

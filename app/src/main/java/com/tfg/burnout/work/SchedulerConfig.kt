@@ -16,10 +16,6 @@ import java.time.temporal.ChronoUnit
 object SchedulerConfig {
 
     /**
-     * Programa el worker para que se ejecute una vez al día, de madrugada.
-     * WorkManager garantiza la persistencia entre reinicios del dispositivo.
-     */
-    /**
      * Programa la comprobación diaria del ciclo de reevaluación (Tarea 2).
      * El worker decide si toca notificar; aquí solo se garantiza que se
      * ejecute una vez al día y que sobreviva a reinicios.
@@ -37,6 +33,10 @@ object SchedulerConfig {
         )
     }
 
+    /**
+     * Programa el worker para que se ejecute una vez al día, de madrugada.
+     * WorkManager garantiza la persistencia entre reinicios del dispositivo.
+     */
     fun programarLecturaNocturna(context: Context) {
         val constraints = Constraints.Builder()
             // No requiere red (offline-first); sí conviene que el dispositivo

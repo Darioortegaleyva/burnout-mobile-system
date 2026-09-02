@@ -45,21 +45,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun RootScreen(abrirEnChat: Boolean = false) {
-    // PERMISO DE NOTIFICACIONES (Android 13+, Tarea 2).
-    //
-    // Sin solicitarlo en tiempo de ejecución, declararlo en el manifest no
-    // basta y el recordatorio de reevaluación no llegaría nunca. Se pide una
-    // sola vez, después del consentimiento, y su denegación no bloquea nada:
-    // la aplicación sigue funcionando, solo que sin aviso.
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-        val permisoNotificaciones = rememberLauncherForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { /* concedido o no, se continúa igual */ }
-        LaunchedEffect(Unit) {
-            permisoNotificaciones.launch(android.Manifest.permission.POST_NOTIFICATIONS)
-        }
-    }
-
     val app = LocalContext.current.applicationContext as BurnoutApp
     val scope = rememberCoroutineScope()
     val usuario by app.repository.observarUsuario().collectAsState(initial = null)
@@ -83,6 +68,35 @@ private fun RootScreen(abrirEnChat: Boolean = false) {
                 scope.launch { app.repository.guardarPerfilContexto(c, a, ap) }
             })
         }
-        else -> AppNavigation(abrirEnChat = abrirEnChat)
+        else -> {
+            // El permiso de notificaciones se pide AQUÍ, ya aceptado el
+            // consentimiento. Estaba antes al principio de RootScreen, fuera
+            // del when, de modo que el diálogo del sistema se superponía a la
+            // pantalla de consentimiento: se pedía permiso para avisar al
+            // usuario antes de que este hubiera aceptado nada, justo lo que la
+            // propia pantalla promete que no ocurrirá (RGPD art. 7).
+            PedirPermisoNotificaciones()
+            AppNavigation(abrirEnChat = abrirEnChat)
+        }
+    }
+}
+
+/**
+ * PERMISO DE NOTIFICACIONES (Android 13+, Tarea 2).
+ *
+ * Sin solicitarlo en tiempo de ejecución, declararlo en el manifest no basta
+ * y el recordatorio de reevaluación no llegaría nunca. Se pide una sola vez y
+ * su denegación no bloquea nada: la aplicación sigue funcionando, solo que
+ * sin aviso.
+ */
+@Composable
+private fun PedirPermisoNotificaciones() {
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        val permisoNotificaciones = rememberLauncherForActivityResult(
+            ActivityResultContracts.RequestPermission()
+        ) { /* concedido o no, se continúa igual */ }
+        LaunchedEffect(Unit) {
+            permisoNotificaciones.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
     }
 }

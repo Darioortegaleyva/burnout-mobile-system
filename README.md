@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="banner_readme.png" alt="Mi Energía — sistema móvil de evaluación y mitigación del burnout" width="100%">
+  <img src="banner_readme.png" alt="Tu Propio Ritmo — sistema móvil de evaluación y mitigación del burnout" width="100%">
 </p>
 
 <p align="center">
@@ -12,7 +12,7 @@
 
 ---
 
-**Mi Energía** es una aplicación Android que ayuda a detectar a tiempo el síndrome de quemarse por el trabajo (burnout) y a mitigarlo. Cruza lo que la persona *siente*, mediante un cuestionario psicométrico, con lo que su *cuerpo registra* durante la noche —sueño, pulso en reposo y variabilidad cardíaca— y traduce ambas cosas en una lectura comprensible y en pautas concretas.
+**Tu Propio Ritmo** es una aplicación Android que ayuda a detectar a tiempo el síndrome de quemarse por el trabajo (burnout) y a mitigarlo. Cruza lo que la persona *siente*, mediante un cuestionario psicométrico, con lo que su *cuerpo registra* durante la noche —sueño, pulso en reposo y variabilidad cardíaca— y traduce ambas cosas en una lectura comprensible y en pautas concretas.
 
 Todo el procesamiento sucede dentro del teléfono. No hay servidor, no hay cuentas de usuario y la aplicación no realiza ninguna llamada de red. Los datos de salud nunca salen del dispositivo.
 
@@ -74,14 +74,14 @@ El instalable ronda los 300 MB, casi todo modelo. Es el precio de que la aplicac
 
 ### Para que lleguen los datos del reloj
 
-La aplicación no habla con tu reloj: lee de Health Connect. La cadena completa es **reloj → app del fabricante → Health Connect → Mi Energía**, y basta con que un eslabón falle para que no llegue nada.
+La aplicación no habla con tu reloj: lee de Health Connect. La cadena completa es **reloj → app del fabricante → Health Connect → Tu Propio Ritmo**, y basta con que un eslabón falle para que no llegue nada.
 
 Si la pantalla de Dispositivos muestra el semáforo en ámbar o gris:
 
 - Abre la aplicación del fabricante y deja que sincronice
 - Comprueba en los ajustes de esa aplicación que tiene permiso para **escribir** en Health Connect
 - Verifica que Health Connect está instalado y actualizado
-- Vuelve a Mi Energía y pulsa «Conectar y actualizar datos»
+- Vuelve a Tu Propio Ritmo y pulsa «Conectar y actualizar datos»
 
 Ten en cuenta que la línea base necesita **al menos tres días** de registros antes de calcular desviación alguna. Hasta entonces el sistema opera solo con el cuestionario, que es el comportamiento correcto: prefiere abstenerse antes que construir una referencia poco fiable.
 

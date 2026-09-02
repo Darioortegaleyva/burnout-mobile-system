@@ -36,7 +36,14 @@ interface CesqtDao {
     @Insert
     suspend fun insertar(respuesta: CesqtResponseEntity): Long
 
-    @Query("SELECT * FROM cesqt_response ORDER BY fechaEpochDay DESC LIMIT 1")
+    /**
+     * La ordenación desempata por id, igual que [penultimo]. Sin ese
+     * desempate, dos evaluaciones del MISMO día quedaban empatadas y SQLite
+     * devolvía la primera insertada: al reevaluar en el día, el índice se
+     * seguía calculando con las respuestas viejas y [resumenDelCiclo]
+     * comparaba una fila consigo misma.
+     */
+    @Query("SELECT * FROM cesqt_response ORDER BY fechaEpochDay DESC, id DESC LIMIT 1")
     suspend fun ultimo(): CesqtResponseEntity?
 
     /** Evaluación anterior a la última, para comparar ciclos (CU-04). */

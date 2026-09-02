@@ -47,7 +47,7 @@ import kotlinx.coroutines.launch
         MetaEntity::class,
         RecomendacionEntity::class
     ],
-    version = 3,  // v2: perfil de contexto laboral en UsuarioEntity (§5.5)
+    version = 3,  // v3: perfil físico opcional en UsuarioEntity (Tarea 6)
     exportSchema = true
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -64,6 +64,12 @@ abstract class AppDatabase : RoomDatabase() {
 
         fun obtener(context: Context, scope: CoroutineScope): AppDatabase {
             return INSTANCE ?: synchronized(this) {
+                // Segunda comprobación DENTRO del cerrojo: sin ella, dos hilos
+                // que llegasen a la vez con INSTANCE a null construirían la
+                // base dos veces —abriendo el fichero cifrado por duplicado y
+                // relanzando la precarga— porque el primero solo publica su
+                // instancia cuando el segundo ya ha entrado.
+                INSTANCE?.let { return it }
                 val app = context.applicationContext
 
                 // Carga de las bibliotecas nativas de SQLCipher antes de

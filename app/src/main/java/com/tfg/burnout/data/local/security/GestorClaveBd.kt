@@ -1,5 +1,6 @@
 package com.tfg.burnout.data.local.security
 
+import android.annotation.SuppressLint
 import android.content.Context
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
@@ -23,6 +24,10 @@ object GestorClaveBd {
     private const val PREFS = "seguridad_bd"
     private const val CLAVE = "passphrase_sqlcipher"
 
+    // commit() es intencionado y lint no puede saberlo: ver el porqué junto a
+    // la escritura. El coste de bloquear aquí es una sola vez en la vida de
+    // la instalación, en el primer arranque.
+    @SuppressLint("ApplySharedPref")
     fun passphrase(context: Context): ByteArray {
         val masterKey = MasterKey.Builder(context)
             .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
@@ -39,7 +44,12 @@ object GestorClaveBd {
 
         val bytes = ByteArray(32).also { SecureRandom().nextBytes(it) }
         val codificada = String(bytes, Charsets.ISO_8859_1)
-        prefs.edit().putString(CLAVE, codificada).apply()
+        // commit() y no apply(): la base se abre acto seguido con esta
+        // passphrase. Con la escritura asíncrona, un cierre del proceso
+        // entre ambas dejaría una base cifrada con una clave que ya no
+        // existe en disco, y el arranque siguiente la descartaría por
+        // ilegible perdiendo todos los datos de salud.
+        prefs.edit().putString(CLAVE, codificada).commit()
         return bytes
     }
 }

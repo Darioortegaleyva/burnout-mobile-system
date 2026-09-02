@@ -1,0 +1,362 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "9f1f81a10b6c0050d12800a53dbce68e",
+    "entities": [
+      {
+        "tableName": "usuario",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `nombre` TEXT NOT NULL, `provincia` TEXT, `rmssdMedioBase` REAL NOT NULL, `tstMedioBaseMin` REAL NOT NULL, `rhrMedioBase` REAL NOT NULL, `ultimaEmaEpochDay` INTEGER NOT NULL, `fechaUltimoIndiceEpochDay` INTEGER NOT NULL, `ultimoR` REAL NOT NULL, `consentimientoAceptado` INTEGER NOT NULL, `cargaPercibida` INTEGER, `autonomiaPercibida` INTEGER, `apoyoPercibido` INTEGER, `edad` INTEGER, `sexoBiologico` TEXT, `alturaCm` INTEGER, `pesoKg` REAL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombre",
+            "columnName": "nombre",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "provincia",
+            "columnName": "provincia",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rmssdMedioBase",
+            "columnName": "rmssdMedioBase",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "tstMedioBaseMin",
+            "columnName": "tstMedioBaseMin",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rhrMedioBase",
+            "columnName": "rhrMedioBase",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ultimaEmaEpochDay",
+            "columnName": "ultimaEmaEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fechaUltimoIndiceEpochDay",
+            "columnName": "fechaUltimoIndiceEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "ultimoR",
+            "columnName": "ultimoR",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "consentimientoAceptado",
+            "columnName": "consentimientoAceptado",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cargaPercibida",
+            "columnName": "cargaPercibida",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "autonomiaPercibida",
+            "columnName": "autonomiaPercibida",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "apoyoPercibido",
+            "columnName": "apoyoPercibido",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "edad",
+            "columnName": "edad",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "sexoBiologico",
+            "columnName": "sexoBiologico",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "alturaCm",
+            "columnName": "alturaCm",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pesoKg",
+            "columnName": "pesoKg",
+            "affinity": "REAL",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "cesqt_response",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fechaEpochDay` INTEGER NOT NULL, `scoreGlobalNormalizado` REAL NOT NULL, `subscoreCulpa` REAL NOT NULL, `mediaIlusion` REAL NOT NULL, `mediaDesgaste` REAL NOT NULL, `mediaIndolencia` REAL NOT NULL, `respuestasJson` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fechaEpochDay",
+            "columnName": "fechaEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scoreGlobalNormalizado",
+            "columnName": "scoreGlobalNormalizado",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "subscoreCulpa",
+            "columnName": "subscoreCulpa",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaIlusion",
+            "columnName": "mediaIlusion",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaDesgaste",
+            "columnName": "mediaDesgaste",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mediaIndolencia",
+            "columnName": "mediaIndolencia",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "respuestasJson",
+            "columnName": "respuestasJson",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "biometria",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`fechaEpochDay` INTEGER NOT NULL, `rmssdMs` REAL, `tstMin` REAL, `rhrBpm` REAL, PRIMARY KEY(`fechaEpochDay`))",
+        "fields": [
+          {
+            "fieldPath": "fechaEpochDay",
+            "columnName": "fechaEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "rmssdMs",
+            "columnName": "rmssdMs",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "tstMin",
+            "columnName": "tstMin",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rhrBpm",
+            "columnName": "rhrBpm",
+            "affinity": "REAL",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "fechaEpochDay"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "sede_cop",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`provincia` TEXT NOT NULL, `nombreColegio` TEXT NOT NULL, `telefono` TEXT NOT NULL, `web` TEXT NOT NULL, PRIMARY KEY(`provincia`))",
+        "fields": [
+          {
+            "fieldPath": "provincia",
+            "columnName": "provincia",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nombreColegio",
+            "columnName": "nombreColegio",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "telefono",
+            "columnName": "telefono",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "web",
+            "columnName": "web",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "provincia"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "meta",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `categoria` TEXT NOT NULL, `titulo` TEXT NOT NULL, `activa` INTEGER NOT NULL, `fechaCreacionEpochDay` INTEGER NOT NULL, `cumplimientosJson` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoria",
+            "columnName": "categoria",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "titulo",
+            "columnName": "titulo",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "activa",
+            "columnName": "activa",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fechaCreacionEpochDay",
+            "columnName": "fechaCreacionEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cumplimientosJson",
+            "columnName": "cumplimientosJson",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "recomendacion",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `pautaId` TEXT NOT NULL, `categoria` TEXT NOT NULL, `fechaEpochDay` INTEGER NOT NULL, `valoracion` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pautaId",
+            "columnName": "pautaId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "categoria",
+            "columnName": "categoria",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fechaEpochDay",
+            "columnName": "fechaEpochDay",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "valoracion",
+            "columnName": "valoracion",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '9f1f81a10b6c0050d12800a53dbce68e')"
+    ]
+  }
+}

@@ -47,6 +47,14 @@ android {
     }
 }
 
+// Room exporta el esquema (exportSchema = true en AppDatabase) y necesita que
+// se le diga dónde. Sin esta ruta el procesador avisaba en cada compilación y
+// no se generaba nada; con ella, app/schemas/ queda con el JSON de cada
+// versión, que documenta la estructura real de la base.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     // --- Núcleo Android / Kotlin ---
     implementation("androidx.core:core-ktx:1.13.1")

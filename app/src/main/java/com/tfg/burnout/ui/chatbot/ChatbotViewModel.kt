@@ -283,12 +283,12 @@ class ChatbotViewModel(
         when (FiltroCrisis.evaluar(consulta)) {
             FiltroCrisis.Nivel.CRISIS -> {
                 FiltroCrisis.respuestaCrisis.forEach { addBot(it) }
-                iniciarDerivacion()
+                iniciarDerivacion(OrigenDerivacion.CRISIS)
                 return
             }
             FiltroCrisis.Nivel.MALESTAR_INTENSO -> {
                 FiltroCrisis.respuestaMalestar.forEach { addBot(it) }
-                iniciarDerivacion()
+                iniciarDerivacion(OrigenDerivacion.ORDINARIA)
                 return
             }
             FiltroCrisis.Nivel.NINGUNO -> Unit
@@ -457,7 +457,7 @@ class ChatbotViewModel(
                     if (cesqt != null && esc != null &&
                         gestorCoping.requiereDerivacion(esc, cesqt.subscoreCulpa)
                     ) {
-                        iniciarDerivacion()
+                        iniciarDerivacion(OrigenDerivacion.ORDINARIA)
                         return@launch
                     }
 
@@ -560,7 +560,7 @@ class ChatbotViewModel(
             val cargaBio = indice?.cargaBiometrica
             val escenario = gestorCoping.clasificar(resultado.scoreGlobalNormalizado, cargaBio)
             if (gestorCoping.requiereDerivacion(escenario, resultado.subscoreCulpa)) {
-                iniciarDerivacion()
+                iniciarDerivacion(OrigenDerivacion.ORDINARIA)
             } else if (indice != null) {
                 // Sin derivación: el asistente ofrece una pauta de afrontamiento.
                 // El texto NO es fijo: se elige del banco según escenario y
@@ -600,7 +600,7 @@ class ChatbotViewModel(
             val cesqt = repository.ultimoCesqt() ?: return@launch
             val escenario = gestorCoping.clasificar(cesqt.scoreGlobalNormalizado, cargaBiometrica = null)
             if (gestorCoping.requiereDerivacion(escenario, cesqt.subscoreCulpa)) {
-                iniciarDerivacion()
+                iniciarDerivacion(OrigenDerivacion.ORDINARIA)
             }
         }
     }
@@ -749,30 +749,76 @@ class ChatbotViewModel(
         }
     }
 
-    private fun iniciarDerivacion() {
+    /**
+     * Por dónde se ha llegado a la derivación. Condiciona el TONO con que se
+     * presenta la línea de ayuda inmediata, nunca su disponibilidad: el
+     * teléfono y la web son los mismos en ambos casos y se ofrecen con la
+     * misma prominencia (ver RecursoCrisis).
+     */
+    private enum class OrigenDerivacion {
+        /** La persona ha expresado malestar agudo en su propio mensaje. */
+        CRISIS,
+        /** El resultado de la evaluación cruza los cortes de derivación. */
+        ORDINARIA
+    }
+
+    private fun iniciarDerivacion(origen: OrigenDerivacion) {
         viewModelScope.launch {
             addBot("Por lo que me cuentas, creo que te vendría bien el apoyo de un profesional. No estás solo en esto.")
 
             // SALVAGUARDA DE CRISIS AGUDA: además de la derivación ordinaria,
             // se ofrece SIEMPRE una línea de ayuda inmediata 24/7 (la app no es
             // un servicio de emergencias; ver ModuloEticoRuteo.lineaCrisis()).
+            //
+            // El encabezado cambia según el origen. Un CESQT alto —o una Culpa
+            // sobre el corte del Perfil 2— describe un burnout severo, que no
+            // es una crisis: abrir ahí con «atención a la conducta suicida»
+            // desborda lo que el sistema ha medido. Cuando es la propia
+            // persona quien ha expresado el malestar agudo, en cambio, el
+            // nombre explícito es lo que permite reconocerse en el recurso.
             val crisis = moduloEtico.lineaCrisis()
             addBot(
-                "Si en algún momento sientes que no puedes más y necesitas hablar " +
-                "con alguien ahora mismo, tienes la ${crisis.nombre}. " +
-                "Llama al ${crisis.telefono}, a cualquier hora."
+                when (origen) {
+                    OrigenDerivacion.CRISIS ->
+                        "Si en algún momento sientes que no puedes más y necesitas hablar " +
+                        "con alguien ahora mismo, tienes la ${crisis.nombre}. " +
+                        "Llama al ${crisis.telefono}, a cualquier hora. " +
+                        "Más información en ${crisis.web}"
+                    OrigenDerivacion.ORDINARIA ->
+                        "Y si en algún momento lo necesitas ya, tienes la ${crisis.nombreNeutro}. " +
+                        "Llama al ${crisis.telefono}, a cualquier hora. " +
+                        "Más información en ${crisis.web}"
+                }
             )
 
             addBot("Y para un acompañamiento profesional continuado: ¿en qué provincia estás? Así te paso el contacto más cercano.")
-            // Los chips muestran algunas provincias frecuentes + "Otra"; en la
-            // app real, "Otra" desplegaría el listado completo de 52 provincias.
-            val provincias = moduloEtico.provinciasDisponibles().take(3) + "Otra"
-            _ui.value = _ui.value.copy(chips = provincias, fase = FaseChat.DERIVACION)
+            // Se abre con unas pocas provincias frecuentes y «Otra», que
+            // despliega el directorio entero en resolverProvincia(). Antes
+            // aquí había un take(3) sobre una lista ordenada alfabéticamente:
+            // ofrecía A Coruña, Álava y Albacete —ni frecuentes ni elegidas—
+            // y dejaba las otras cuarenta y nueve demarcaciones fuera de
+            // alcance, porque «Otra» terminaba en el recurso genérico de la web.
+            _ui.value = _ui.value.copy(
+                chips = ModuloEticoRuteo.chipsIniciales(moduloEtico.provinciasDisponibles()),
+                fase = FaseChat.DERIVACION
+            )
         }
     }
 
     private fun resolverProvincia(provincia: String) {
         viewModelScope.launch {
+            // «Otra» no es una provincia: despliega el directorio completo sin
+            // salir del chat. Si la base no devolviera nada, se cae al camino
+            // de abajo, que ya remite al recurso web.
+            if (provincia == ModuloEticoRuteo.OTRA_PROVINCIA) {
+                val todas = moduloEtico.provinciasDisponibles()
+                if (todas.isNotEmpty()) {
+                    addBot("Dime cuál es la tuya:")
+                    _ui.value = _ui.value.copy(chips = todas, fase = FaseChat.DERIVACION)
+                    return@launch
+                }
+            }
+
             val sede = moduloEtico.resolverSede(provincia)
             if (sede != null) {
                 addBot("${sede.nombreColegio}\nTel.: ${sede.telefono}\nWeb: ${sede.web}")

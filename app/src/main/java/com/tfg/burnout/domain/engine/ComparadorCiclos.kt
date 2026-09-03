@@ -39,6 +39,28 @@ object ComparadorCiclos {
     )
 
     /**
+     * Construye las tres dimensiones que entran en la comparación de ciclos a
+     * partir de las medias PERSISTIDAS del CESQT.
+     *
+     * Todas llegan ya orientadas «mayor = peor»: la inversión de la Ilusión la
+     * aplica CalculadoraCesqt (4 − v) antes de guardarla, de modo que aquí no
+     * se vuelve a tocar ninguna. Que el cableado viva en un solo sitio es
+     * deliberado: mientras estuvo repartido en el ViewModel, la Ilusión se
+     * invertía por segunda vez y ningún test lo veía.
+     *
+     * Cada parámetro es (evaluación anterior, evaluación actual).
+     */
+    fun dimensionesDeCiclo(
+        ilusion: Pair<Double, Double>,
+        desgaste: Pair<Double, Double>,
+        indolencia: Pair<Double, Double>,
+    ): List<Dimension> = listOf(
+        Dimension("el agotamiento", desgaste.first, desgaste.second),
+        Dimension("la distancia con el trabajo", indolencia.first, indolencia.second),
+        Dimension("la ilusión", ilusion.first, ilusion.second),
+    )
+
+    /**
      * @param globalAntes  puntuación normalizada de la evaluación anterior.
      * @param globalAhora  puntuación normalizada de la actual.
      * @param dimensiones  medias por dimensión, ya orientadas de modo que

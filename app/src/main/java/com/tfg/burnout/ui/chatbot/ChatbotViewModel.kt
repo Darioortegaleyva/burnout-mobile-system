@@ -687,19 +687,21 @@ class ChatbotViewModel(
         val resumen = repository.resumenDelCiclo() ?: return
         val previo = resumen.anterior
 
-        // La Ilusión se invierte para que, en las tres dimensiones que entran
-        // en el global, un valor mayor signifique siempre «peor» y la
-        // comparación resulte homogénea.
-        val dims = listOf(
-            ComparadorCiclos.Dimension(
-                "el agotamiento", previo.mediaDesgaste, actual.mediaDesgaste
-            ),
-            ComparadorCiclos.Dimension(
-                "la distancia con el trabajo", previo.mediaIndolencia, actual.mediaIndolencia
-            ),
-            ComparadorCiclos.Dimension(
-                "la ilusión", 4.0 - previo.mediaIlusion, 4.0 - actual.mediaIlusion
-            ),
+        // Las tres dimensiones llegan ya orientadas de modo que un valor mayor
+        // signifique «peor», que es lo que ComparadorCiclos espera: la
+        // inversión de la Ilusión la aplica CalculadoraCesqt (4 − v) antes de
+        // persistir la media, así que mediaIlusion NO vuelve a invertirse aquí.
+        //
+        // Antes se escribía «4.0 − previo.mediaIlusion», que deshacía esa
+        // inversión y devolvía la escala a su sentido original: una ilusión
+        // que se derrumbaba producía un delta negativo y el asistente lo
+        // anunciaba como «ha mejorado». El signo del global era correcto, de
+        // modo que el fallo solo asomaba en la frase de la dimensión
+        // destacada, y siempre invertido.
+        val dims = ComparadorCiclos.dimensionesDeCiclo(
+            ilusion = previo.mediaIlusion to actual.mediaIlusion,
+            desgaste = previo.mediaDesgaste to actual.mediaDesgaste,
+            indolencia = previo.mediaIndolencia to actual.mediaIndolencia,
         )
         val cmp = ComparadorCiclos.comparar(
             previo.scoreGlobalNormalizado, actual.scoreGlobalNormalizado, dims

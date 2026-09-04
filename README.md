@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/Kotlin-2.0-7F52FF" alt="Kotlin">
   <img src="https://img.shields.io/badge/UI-Jetpack%20Compose-4285F4" alt="Compose">
   <img src="https://img.shields.io/badge/arquitectura-offline--first-4A7C59" alt="Offline-first">
-  <img src="https://img.shields.io/badge/tests-65%20passing-brightgreen" alt="65 tests">
+  <img src="https://img.shields.io/badge/tests-90%20passing-brightgreen" alt="90 tests">
 </p>
 
 ---
@@ -141,8 +141,8 @@ El índice se recalcula **cada cuatro semanas** sobre una media móvil: es una f
 ### Pasos
 
 ```bash
-git clone https://github.com/Darioortegaleyva/TFG-BurnoutApp.git
-cd TFG-BurnoutApp
+git clone https://github.com/Darioortegaleyva/burnout-mobile-system.git
+cd burnout-mobile-system
 ```
 
 Abre la carpeta desde Android Studio y espera a que Gradle sincronice.
@@ -213,7 +213,7 @@ Arquitectura MVVM en tres capas. El dominio no conoce Android; la capa de datos 
 ./gradlew test
 ```
 
-65 pruebas unitarias en 14 suites, que cubren el cálculo del índice y sus umbrales, la clasificación en escenarios, la selección de pautas sin repetición, los tres filtros del asistente, el validador de salida y el recuperador documental.
+90 pruebas unitarias en 21 suites, que cubren el cálculo del índice y sus umbrales, la clasificación en escenarios, la selección de pautas sin repetición, los tres filtros del asistente, el validador de salida y el recuperador documental.
 
 ## Privacidad y límites
 
